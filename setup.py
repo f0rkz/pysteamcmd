@@ -1,8 +1,8 @@
 from setuptools import setup
 
 setup(name='pysteamcmd',
-      version='0.0.1',
-      description='The funniest joke in the world',
+      version='0.1.0',
+      description='Python package to install and utilize steamcmd',
       url='http://github.com/f0rkz/pysteamcmd',
       author='f0rkz',
       author_email='f0rkz@f0rkznet.net',

@@ -34,15 +34,15 @@ class Steamcmd(object):
                                       '{}'.format(self.install_path))
 
         self.platform = platform.system()
-        if self.platform is 'Windows':
+        if self.platform == 'Windows':
             self.steamcmd_url = 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip'
             self.steamcmd_zip = 'steamcmd.zip'
-            self.steamcmd_exe = 'steamcmd.exe'
+            self.steamcmd_exe = os.path.join(self.install_path, 'steamcmd.exe')
 
-        elif self.platform is 'Linux':
+        elif self.platform == 'Linux':
             self.steamcmd_url = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz"
             self.steamcmd_zip = 'steamcmd.tar.gz'
-            self.steamcmd_exe = 'steamcmd'
+            self.steamcmd_exe = os.path.join(self.install_path, 'steamcmd.sh')
 
         else:
             raise SteamcmdException('The operating system is not supported.'
@@ -86,16 +86,20 @@ class Steamcmd(object):
         return True
 
     def install_gamefiles(self, gameid, game_install_dir, user='anonymous', password=None, validate=False):
-        steamcmd_params = []
-        steamcmd_params.append('+force_install_dir {}'.format(game_install_dir))
-        steamcmd_params.append('+app_update {}'.format(gameid))
-
-        if user == 'anonymous':
-            steamcmd_params.append('+@NoPromptForPassword 1')
-            steamcmd_params.append('+login anonymous')
+        if validate:
+            validate = 'validate'
         else:
-            steamcmd_params.append('+login {} {}'.format(user, password))
+            validate = None
 
-        steamcmd_params.append('+quit')
-
-        return subprocess.call([self.steamcmd_exe, steamcmd_params], shell=True)
+        steamcmd_params = (
+            self.steamcmd_exe,
+            '+login {} {}'.format(user, password),
+            '+force_install_dir {}'.format(game_install_dir),
+            '+app_update {}'.format(gameid),
+            '{}'.format(validate),
+            '+quit',
+        )
+        try:
+            return subprocess.check_call(steamcmd_params)
+        except subprocess.CalledProcessError:
+            raise SteamcmdException("Steamcmd was unable to run. Did you install your 32-bit libraries?")
