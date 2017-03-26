@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='pysteamcmd',
-      version='0.1.1',
+      version='0.1.2',
       description='Python package to install and utilize steamcmd',
       url='http://github.com/f0rkz/pysteamcmd',
       author='f0rkz',
