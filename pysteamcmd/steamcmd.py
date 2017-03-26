@@ -24,9 +24,7 @@ class SteamcmdException(Exception):
 class Steamcmd(object):
     def __init__(self, install_path):
         """
-        install_path: os.path object pointing to the install location of steamcmd
-        example: os.path.join('home','user','steamcmd')
-        :param install_path:
+        :param install_path: installation path for steamcmd
         """
         self.install_path = install_path
         if not os.path.isdir(self.install_path):
@@ -68,24 +66,38 @@ class Steamcmd(object):
             raise SteamcmdException('The operating system is not supported.'
                                       'Expected Linux or Windows, received: {}'.format(self.platform))
 
-    def install(self):
+    def install(self, force=False):
         """
-        Installs Steamcmd to path. Returns True if everything went aok.
+        Installs steamcmd if it is not already installed to self.install_path.
+        :param force: forces steamcmd install regardless of its presence
+        :return:
         """
-        # Download steamcmd and extract it
-        try:
-            self._download_steamcmd()
-        except SteamcmdException as e:
-            return e
+        if not os.path.isfile(self.steamcmd_exe) or force == True:
+            # Steamcmd isn't installed. Go ahead and install it.
+            try:
+                self._download_steamcmd()
+            except SteamcmdException as e:
+                return e
 
-        try:
-            self._extract_steamcmd()
-        except SteamcmdException as e:
-            return e
-
-        return True
+            try:
+                self._extract_steamcmd()
+            except SteamcmdException as e:
+                return e
+        else:
+            raise SteamcmdException('Steamcmd is already installed. Reinstall is not necessary.'
+                                    'Use force=True to override.')
+        return
 
     def install_gamefiles(self, gameid, game_install_dir, user='anonymous', password=None, validate=False):
+        """
+        Installs gamefiles for dedicated server. This can also be used to update the gameserver.
+        :param gameid: steam game id for the files downloaded
+        :param game_install_dir: installation directory for gameserver files
+        :param user: steam username (defaults anonymous)
+        :param password: steam password (defaults None)
+        :param validate: should steamcmd validate the gameserver files (takes a while)
+        :return: subprocess call to steamcmd
+        """
         if validate:
             validate = 'validate'
         else:
