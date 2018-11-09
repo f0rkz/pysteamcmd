@@ -115,3 +115,33 @@ class Steamcmd(object):
             return subprocess.check_call(steamcmd_params)
         except subprocess.CalledProcessError:
             raise SteamcmdException("Steamcmd was unable to run. Did you install your 32-bit libraries?")
+
+    def install_workshopfiles(self, gameid, workshop_id, game_install_dir, user='anonymous', password=None,
+                              validate=False):
+        """
+        Installs gamefiles for dedicated server. This can also be used to update the gameserver.
+        :param gameid: steam game id for the files downloaded
+        :param workshop_id: id of workshop item to download
+        :param game_install_dir: installation directory for gameserver files
+        :param user: steam username (defaults anonymous)
+        :param password: steam password (defaults None)
+        :param validate: should steamcmd validate the gameserver files (takes a while)
+        :return: subprocess call to steamcmd
+        """
+        if validate:
+            validate = 'validate'
+        else:
+            validate = None
+
+        steamcmd_params = (
+            self.steamcmd_exe,
+            '+login {} {}'.format(user, password),
+            '+force_install_dir {}'.format(game_install_dir),
+            '+workshop_download_item {} {}'.format(gameid, workshop_id),
+            '{}'.format(validate),
+            '+quit',
+        )
+        try:
+            return subprocess.check_call(steamcmd_params)
+        except subprocess.CalledProcessError:
+            raise SteamcmdException("Steamcmd was unable to run. Did you install your 32-bit libraries?")
