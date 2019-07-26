@@ -1,10 +1,16 @@
+import sys
 import os
 import platform
-import urllib
 import zipfile
 import tarfile
 import subprocess
 
+# urllib.urlretrieve no longer exists in python 3.
+pythonVersion = sys.version_info[0]
+if pythonVersion == 3:
+	from urllib.request import urlretrieve
+elif pythonVersion == 2:
+	from urllib import urlretrieve
 
 class SteamcmdException(Exception):
     """
@@ -48,7 +54,7 @@ class Steamcmd(object):
 
     def _download_steamcmd(self):
         try:
-            return urllib.urlretrieve(self.steamcmd_url, self.steamcmd_zip)
+            return urlretrieve(self.steamcmd_url, self.steamcmd_zip)
         except Exception as e:
             raise SteamcmdException('An unknown exception occurred! {}'.format(e))
 
