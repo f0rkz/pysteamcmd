@@ -17,9 +17,12 @@ Usage:
     >>> steamcmd.install()
     True
     >>> gameserver_path = os.path.join('/','home','f0rkz','mygameserver')
-    >>> steamcmd.install_gamefiles(gameid=232330, game_install_dir=gameserver_path, user='anonymous', password=None, validate=True)
+    >>> steamcmd.install_gamefiles(
+    ...    gameid=232330,
+    ...    game_install_dir=gameserver_path,
+    ...    user='anonymous',
+    ...    password=None,
+    ...    validate=True,
+    ... )
 
 """
-
-
-from .steamcmd import SteamcmdException, Steamcmd
