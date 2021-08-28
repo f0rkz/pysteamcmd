@@ -169,7 +169,7 @@ class Steamcmd(object):
             vdf_data = self._parse_vdf_text(vdf_data=workshop_vdf)
 
         with open("{install_path}/workshop.vdf".format(install_path=self.install_path), "w") as vdf_file:
-            vdf.dumps(vdf_data, vdf_file)
+            vdf.dump(vdf_data, vdf_file)
 
         # Upload the workshop files
         steamcmd_params = (
