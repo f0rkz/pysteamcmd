@@ -60,7 +60,26 @@ class Steamcmd(object):
 
         elif self.platform == 'Linux':
             with tarfile.open(self.steamcmd_zip, 'r:gz') as f:
-                return f.extractall(self.install_path)
+                       def is_within_directory(directory, target):
+                           
+                           abs_directory = os.path.abspath(directory)
+                           abs_target = os.path.abspath(target)
+                       
+                           prefix = os.path.commonprefix([abs_directory, abs_target])
+                           
+                           return prefix == abs_directory
+                       
+                       def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+                       
+                           for member in tar.getmembers():
+                               member_path = os.path.join(path, member.name)
+                               if not is_within_directory(path, member_path):
+                                   raise Exception("Attempted Path Traversal in Tar File")
+                       
+                           tar.extractall(path, members, numeric_owner=numeric_owner) 
+                           
+                       
+                       safe_extract(f, self.install_path)
 
         else:
             # This should never happen, but let's just throw it just in case.
